@@ -7,7 +7,7 @@ from alpaca.data.requests import StockBarsRequest
 from alpaca.data.timeframe import TimeFrame
 
 class MarketDataProvider:
-    def __init__(self, alpaca_data_client: Optional[StockDataClient] = None):
+    def __init__(self, alpaca_data_client: Optional[StockHistoricalDataClient] = None):
         self.alpaca_data_client = alpaca_data_client
 
     def get_historical_bars(self, symbol: str, start: str, end: str, timeframe: str = "1D") -> Dict:

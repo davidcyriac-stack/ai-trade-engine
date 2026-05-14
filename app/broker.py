@@ -14,7 +14,7 @@ class BrokerInterface:
         raise NotImplementedError()
 
 class AlpacaBroker(BrokerInterface):
-    def __init__(self, trading_client: TradingClient, data_client: Optional[StockDataClient] = None):
+    def __init__(self, trading_client: TradingClient, data_client: Optional[StockHistoricalDataClient] = None):
         self.trading_client = trading_client
         self.data_client = data_client
 
