@@ -8,7 +8,18 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/public/(.*)",
+      "dest": "/public/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=3600"
+      }
+    },
+    {
+      "src": "/(?!api).*",
+      "dest": "/public/index.html"
+    },
+    {
+      "src": "/api/(.*)",
       "dest": "api/index.py"
     }
   ]
