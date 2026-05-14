@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-import os
 from app.routes import router as api_router
 from app.db import init_db
+from app.dashboard import DASHBOARD_HTML
 
 app = FastAPI(title="AI Trade Engine")
 
@@ -17,20 +17,8 @@ app.add_middleware(
 
 app.include_router(api_router, prefix="/api")
 
-# Read dashboard HTML
-DASHBOARD_HTML = None
-def load_dashboard():
-    global DASHBOARD_HTML
-    try:
-        if os.path.exists("public/index.html"):
-            with open("public/index.html", "r") as f:
-                DASHBOARD_HTML = f.read()
-    except:
-        pass
-
 @app.on_event("startup")
 async def startup_event():
-    load_dashboard()
     try:
         init_db()
     except Exception as e:
@@ -38,20 +26,11 @@ async def startup_event():
 
 @app.get("/", response_class=HTMLResponse)
 def root():
-    if DASHBOARD_HTML:
-        return DASHBOARD_HTML
-    return """
-    <html>
-        <head><title>AI Trade Engine</title></head>
-        <body><h1>AI Trade Engine Backend</h1><p>Use /api/* endpoints</p></body>
-    </html>
-    """
+    return DASHBOARD_HTML
 
 @app.get("/dashboard", response_class=HTMLResponse)
 def dashboard():
-    if DASHBOARD_HTML:
-        return DASHBOARD_HTML
-    return {"message": "Dashboard not available"}
+    return DASHBOARD_HTML
 
 @app.get("/health")
 def health_check():
