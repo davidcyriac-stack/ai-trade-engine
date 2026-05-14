@@ -1,0 +1,4 @@
+- [ ] Verify that the workspace is set up for the AI trade engine backend.
+- [ ] Scaffold the Python FastAPI backend with Alpaca and IBKR integration.
+- [ ] Create core modules for AI signals, broker fallback, risk management, technical analysis, and notifications.
+- [ ] Add documentation and startup instructions.
