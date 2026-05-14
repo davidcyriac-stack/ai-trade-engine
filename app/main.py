@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import HTMLResponse
 import os
 from app.routes import router as api_router
 from app.db import init_db
@@ -18,27 +17,40 @@ app.add_middleware(
 
 app.include_router(api_router, prefix="/api")
 
-# Serve static files
-if os.path.exists("public"):
-    app.mount("/public", StaticFiles(directory="public"), name="public")
+# Read dashboard HTML
+DASHBOARD_HTML = None
+def load_dashboard():
+    global DASHBOARD_HTML
+    try:
+        if os.path.exists("public/index.html"):
+            with open("public/index.html", "r") as f:
+                DASHBOARD_HTML = f.read()
+    except:
+        pass
 
 @app.on_event("startup")
 async def startup_event():
+    load_dashboard()
     try:
         init_db()
     except Exception as e:
         print(f"Warning: Database initialization failed: {e}. Continuing without DB persistence.")
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def root():
-    if os.path.exists("public/index.html"):
-        return FileResponse("public/index.html", media_type="text/html")
-    return {"message": "AI Trade Engine backend is running. Use /api/* endpoints."}
+    if DASHBOARD_HTML:
+        return DASHBOARD_HTML
+    return """
+    <html>
+        <head><title>AI Trade Engine</title></head>
+        <body><h1>AI Trade Engine Backend</h1><p>Use /api/* endpoints</p></body>
+    </html>
+    """
 
-@app.get("/dashboard")
+@app.get("/dashboard", response_class=HTMLResponse)
 def dashboard():
-    if os.path.exists("public/index.html"):
-        return FileResponse("public/index.html", media_type="text/html")
+    if DASHBOARD_HTML:
+        return DASHBOARD_HTML
     return {"message": "Dashboard not available"}
 
 @app.get("/health")
