@@ -17,7 +17,10 @@ app.include_router(api_router, prefix="/api")
 
 @app.on_event("startup")
 async def startup_event():
-    init_db()
+    try:
+        init_db()
+    except Exception as e:
+        print(f"Warning: Database initialization failed: {e}. Continuing without DB persistence.")
 
 @app.get("/")
 def root():
